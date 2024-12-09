@@ -179,3 +179,31 @@ void genericAPICaller(const std::string &url, std::string &response_body)
         cleanup();
     }
 }
+
+/**************************************************************************
+ * @brief Retrieves the forecast URL from a given API endpoint.
+ *
+ * This function calls a generic API using the provided URL and stores the response
+ * in the response_body. It then parses the JSON response to extract the forecast URL.
+ *
+ * @param url The API endpoint URL to call.
+ * @param response_body A reference to a string where the API response body will be stored.
+ * @return A string containing the forecast URL if parsing is successful, otherwise an empty string.
+ *
+ * @throws nlohmann::json::parse_error if there is an error parsing the JSON response.
+ **************************************************************************/
+std::string getForecastURL(const std::string &url, std::string& response_body)
+{
+    genericAPICaller(url, response_body);
+    try
+    {
+        nlohmann::json jsonResponse = nlohmann::json::parse(response_body);
+        std::string forecastURL = jsonResponse["properties"]["forecast"];
+        return forecastURL;
+    }
+    catch (const nlohmann::json::parse_error &e)
+    {
+        std::cerr << "JSON Parsing Error: " << e.what() << std::endl;
+    }
+    return "";
+}
