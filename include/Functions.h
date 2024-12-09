@@ -207,3 +207,47 @@ std::string getForecastURL(const std::string &url, std::string& response_body)
     }
     return "";
 }
+
+/**************************************************************************
+ * @brief Populates the forecast data from a given URL.
+ *
+ * This function makes an API call to the specified forecast URL, parses the JSON response,
+ * and populates the provided Forecast object with the forecast periods data. The number of
+ * periods to populate can be limited by the maxPeriods parameter.
+ *
+ * @param forecastURL The URL to fetch the forecast data from.
+ * @param forecast The Forecast object to populate with the forecast data.
+ * @param maxPeriods The maximum number of forecast periods to populate.
+ **************************************************************************/
+void populateForecasts(const std::string& forecastURL, Forecast& forecast, int maxPeriods = 6)
+{
+    std::string response_body;
+    genericAPICaller(forecastURL, response_body);
+
+    try
+    {
+        nlohmann::json jsonResponse = nlohmann::json::parse(response_body);
+
+        int count = 0;
+        for (const auto& period : jsonResponse["properties"]["periods"])
+        {
+            if (count >= maxPeriods) break;
+            ForecastPeriod forecastPeriod;
+
+            forecastPeriod.name = period["name"];
+            forecastPeriod.temperature = period["temperature"];
+            forecastPeriod.temperatureUnit = period["temperatureUnit"];
+            forecastPeriod.windSpeed = period["windSpeed"];
+            forecastPeriod.windDirection = period["windDirection"];
+            forecastPeriod.shortForecast = period["shortForecast"];
+            forecastPeriod.detailedForecast = period["detailedForecast"];
+
+            forecast.periods.push_back(forecastPeriod);
+            ++count;
+        }
+    }
+    catch (const nlohmann::json::parse_error &e)
+    {
+        std::cerr << "JSON Parsing Error: " << e.what() << std::endl;
+    }
+}
