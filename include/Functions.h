@@ -128,3 +128,19 @@ bool fileSearch(std::ifstream &file, std::string &zipCode, Location &location)
     file.close();
     return false;
 }
+
+/**************************************************************************
+ * @brief Callback function for handling data received from a cURL request.
+ * 
+ * @param contents Pointer to the data received.
+ * @param size Size of each data element.
+ * @param nmemb Number of data elements.
+ * @param response Pointer to the string where the data will be appended.
+ * @return The total size of the data processed.
+ **************************************************************************/
+size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *response)
+{
+    size_t totalSize = size * nmemb;
+    response->append(static_cast<char*>(contents), totalSize);
+    return totalSize;
+}
