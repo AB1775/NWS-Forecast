@@ -61,3 +61,25 @@ std::string removeQuotes(const std::string& quotedString)
     }
     return quotedString;
 }
+
+/**************************************************************************
+ * @brief Checks if a file is open and reads the header line if it is.
+ * 
+ * This function checks if the provided ifstream object is open. If the file is not open,
+ * it prints an error message to the standard error stream. If the file is open, it reads
+ * the first line (header line) from the file.
+ * 
+ * @param file Reference to an ifstream object representing the file to be checked.
+ **************************************************************************/
+void checkFileOpen(std::ifstream &file)
+{
+    if (!file.is_open())
+    {
+        std::cerr << "[!] Error: Unable to read Zips File." << std::endl;
+    }
+    else
+    {
+        std::string headerLine;
+        getline(file, headerLine);
+    }
+}
