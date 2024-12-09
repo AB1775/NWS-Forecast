@@ -144,3 +144,38 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *res
     response->append(static_cast<char*>(contents), totalSize);
     return totalSize;
 }
+
+/**************************************************************************
+ * @brief Makes a generic API call to the specified URL and stores the response in the response_body.
+ * 
+ * @param url The URL to make the API call to.
+ * @param response_body The string where the response will be stored.
+ *************************************************************************/
+void genericAPICaller(const std::string &url, std::string &response_body)
+{
+    CURL* curl = curl_easy_init();
+    if (curl)
+    {
+        auto cleanup = [&]() { curl_easy_cleanup(curl); };
+        try
+        {
+            CURLcode res;
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NWS-Forecast");
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_body);
+            res = curl_easy_perform(curl);
+
+            if (res != CURLE_OK)
+            {
+                std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            }
+        }
+        catch (...)
+        {
+            cleanup();
+            throw;
+        }
+        cleanup();
+    }
+}
