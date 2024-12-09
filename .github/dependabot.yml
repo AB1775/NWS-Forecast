@@ -1,6 +1,0 @@
-version: 2
-updates:
-  - package-ecosystem: "conan"
-    directory: "/"
-    schedule:
-      interval: "weekly"
