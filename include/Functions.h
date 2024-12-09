@@ -42,3 +42,22 @@ std::vector<std::string> wordWrap(const std::string& text, size_t lineLength) {
 
     return wrappedLines;
 }
+
+/**************************************************************************
+ * @brief Removes the leading and trailing double quotes from a given string.
+ *
+ * This function checks if the input string starts and ends with double quotes.
+ * If it does, it returns a new string with the leading and trailing quotes removed.
+ * If the input string does not start and end with double quotes, it returns the original string.
+ *
+ * @param quotedString The input string that may contain leading and trailing double quotes.
+ * @return A new string with the leading and trailing double quotes removed, or the original string if no quotes are found.
+ ***************************************************************************/
+std::string removeQuotes(const std::string& quotedString)
+{
+    if (!quotedString.empty() && quotedString.front() == '"' && quotedString.back() == '"')
+    {
+        return quotedString.substr(1, quotedString.size() - 2);
+    }
+    return quotedString;
+}
