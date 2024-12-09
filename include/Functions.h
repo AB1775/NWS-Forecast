@@ -83,3 +83,48 @@ void checkFileOpen(std::ifstream &file)
         getline(file, headerLine);
     }
 }
+
+/**************************************************************************
+ * @brief Searches the zips file for the specified zip code.
+ * 
+ * This function reads each line from the provided file stream and searches for
+ * the specified zip code. If the zip code is found, it populates the provided
+ * Location object with the corresponding data and returns true. If the zip code
+ * is not found, it returns false.
+ * 
+ * @param file Reference to an open ifstream object representing the zips file.
+ * @param zipCode The zip code to search for.
+ * @param location Reference to a Location object to populate with the found data.
+ * @return True if the zip code was found, false otherwise.
+ **************************************************************************/
+bool fileSearch(std::ifstream &file, std::string &zipCode, Location &location)
+{
+    std::string line;
+
+    auto readAndRemoveQuotes = [](std::istringstream &ss) {
+        std::string value;
+        std::getline(ss, value, ',');
+        return removeQuotes(value);
+    };
+
+    while (std::getline(file, line))
+    {
+        std::istringstream ss(line);
+        std::string value = readAndRemoveQuotes(ss);
+
+        if (value == zipCode)
+        {
+            location.zipCode = value;
+            location.state_abbreviation = readAndRemoveQuotes(ss);
+            location.latitude = readAndRemoveQuotes(ss);
+            location.longitude = readAndRemoveQuotes(ss);
+            location.city = readAndRemoveQuotes(ss);
+            location.state = readAndRemoveQuotes(ss);
+
+            file.close();
+            return true;
+        }
+    }
+    file.close();
+    return false;
+}
